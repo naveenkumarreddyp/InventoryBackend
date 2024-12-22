@@ -18,12 +18,20 @@ class App {
   defaultConfiguration(): void {
     this.app.use(
       cors({
-        origin: [process.env.CORS_ORIGIN_URLS!],
+        origin: (origin, callback) => {
+          const allowedOrigins = process.env.CORS_ORIGIN_URLS!.split(",");
+          if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            callback(new Error("Not allowed by CORS"));
+          }
+        },
         credentials: true,
-        methods: "GET,POST,PUT,DELETE,OPTIONS",
-        allowedHeaders: "Content-Type,Authorization",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
       })
     );
+    this.app.options("*", cors());
     this.app.use(cookieParser());
     this.app.use(express.json());
 
