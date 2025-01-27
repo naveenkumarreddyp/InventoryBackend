@@ -16,6 +16,11 @@ class App {
   }
 
   defaultConfiguration(): void {
+    console.log("----cors urls ---- ",process.env.CORS_ORIGIN_URLS)
+    this.app.use((req, _, next) => {
+      console.log('Origin URL:', req.headers.origin);
+      next();
+    });
     this.app.use(
       cors({
         origin: (origin, callback) => {
